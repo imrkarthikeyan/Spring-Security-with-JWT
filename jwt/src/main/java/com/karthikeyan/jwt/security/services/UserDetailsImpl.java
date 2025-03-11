@@ -1,6 +1,5 @@
 package com.karthikeyan.jwt.security.services;
 import com.karthikeyan.jwt.model.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +11,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID =2000651554334305011L;
@@ -22,10 +20,19 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-   public static UserDetailsImpl build(User user){
+    public UserDetailsImpl(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    public static UserDetailsImpl build(User user){
        List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
        return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(), authorities);
    }
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
